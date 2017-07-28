@@ -58,5 +58,3 @@ svg.on("contextmenu", function () {
 ```
 # Demo
 http://plnkr.co/edit/i84SdzHnhKwHgZB21lpe?p=info
-# License
-* MIT
