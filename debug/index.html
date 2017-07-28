@@ -1,10 +1,16 @@
-# d3-v4-contextmenu
-context menu with d3.js v4.
-
-# useage
-```javascript
-var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
-var contextMenu = new window.ContextMenu.default(
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>d3-v4-contextmenu test</title>
+</head>
+<body>
+<div id="main" style="width: 500px;height: 400px;background: #7988bb"></div>
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="/dist/d3-v4-contextmenu.min.js"></script>
+<script type="text/javascript">
+	var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
+	var contextMenu = new window.ContextMenu.default(
       [
         {
           label: "red",
@@ -36,4 +42,7 @@ var contextMenu = new window.ContextMenu.default(
       d3.event.preventDefault();
 	  contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
     });
-```
+</script>
+
+</body>
+</html>
