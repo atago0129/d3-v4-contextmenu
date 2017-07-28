@@ -56,6 +56,7 @@ svg.on("contextmenu", function () {
   contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
 });
 ```
-
+# Demo
+http://plnkr.co/edit/i84SdzHnhKwHgZB21lpe?p=info
 # License
 * MIT
