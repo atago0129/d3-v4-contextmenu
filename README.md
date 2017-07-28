@@ -38,5 +38,20 @@ svg.on("contextmenu", function () {
 });
 ```
 
+or 
+
+```
+npm install git+https://github.com/atago0129/d3-v4-contextmenu#master
+```
+```javascript
+let contextMenu = new ContextMenu([
+  {lebel: "hoge", cb: callback}
+]);
+svg.on("contextmenu", function () {
+  d3.event.preventDefault();
+  contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
+});
+```
+
 # License
 * MIT
