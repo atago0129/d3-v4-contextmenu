@@ -28,20 +28,7 @@ module.exports = {
     rules: [{
       test: /.js$/,
       loader: 'babel-loader',
-      options: {
-        presets: [
-          ['env', {
-            modules: false,
-            loose: true,
-            targets: {
-              browsers: 'last 2 versions'
-            }
-          }]
-        ],
-        plugins: [
-          'babel-plugin-transform-class-properties'
-        ]
-      }
+      exclude: /node_modules/
     }]
   },
 

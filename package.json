@@ -2,9 +2,9 @@
   "name": "d3-v4-contextmenu",
   "version": "0.1.0",
   "description": "context menu with d3.js v4",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && babel --out-dir lib src",
     "debug": "webpack-dev-server --progress --colors --hot"
   },
   "repository": {
@@ -24,6 +24,7 @@
     "d3": "^4.10.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
