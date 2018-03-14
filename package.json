@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/atago0129/d3-v4-contextmenu#readme",
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "d3": "^4.10.0"
   },
   "devDependencies": {
