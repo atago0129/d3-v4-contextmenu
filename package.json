@@ -1,6 +1,6 @@
 {
   "name": "d3-v4-contextmenu",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "context menu with d3.js v4",
   "main": "lib/index.js",
   "scripts": {
