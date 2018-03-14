@@ -68,9 +68,9 @@ export class ContextMenu {
       .attr('height', height);
     contextItems.append("text")
       .text(function (d, ) {
-        if(typeof d.label === 'function') {
+        try {
           return d.label();
-        } else {
+        } catch (e) {
           return String(d.label);
         }
       })

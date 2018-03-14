@@ -1,5 +1,6 @@
 const webpack = require('webpack');
-const BabiliWebpackPlugin = require('babili-webpack-plugin');
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
 
@@ -15,7 +16,7 @@ module.exports = {
     umdNamedDefine: true
   },
 
-  devtool: 'sourcemap',
+  devtool: 'source-map',
 
   devServer: {
     contentBase: 'debug/',
@@ -27,15 +28,36 @@ module.exports = {
   module: {
     rules: [{
       test: /.js$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true,
+          presets: [
+            ['env', {
+              modules: false,
+              loose: true,
+              targets: {
+                browsers: 'last 2 versions'
+              }
+            }]
+          ],
+          plugins: [
+            'babel-plugin-transform-class-properties'
+          ]
+        }
+      }],
     }]
   },
 
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new BabiliWebpackPlugin()
-  ]
+  plugins: [].concat(
+    isProduction
+      ? [
+        new webpack.optimize.UglifyJsPlugin()
+      ]
+      : [
+        new webpack.HotModuleReplacementPlugin()
+      ]
+  )
 
 };
 
