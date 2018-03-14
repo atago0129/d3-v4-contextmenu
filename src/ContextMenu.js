@@ -67,7 +67,13 @@ export class ContextMenu {
       .attr('width', width)
       .attr('height', height);
     contextItems.append("text")
-      .text(function (d, ) {return d.label;})
+      .text(function (d, ) {
+        if(typeof d.label === 'function') {
+          return d.label();
+        } else {
+          return String(d.label);
+        }
+      })
       .attr("class", "dummy-menu-label")
       .style("fill", "rgb")
       .style("font-size", 11)

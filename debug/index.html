@@ -31,7 +31,10 @@
           }
         },
         {
-          label: "snow",
+          label: function () {
+            var date = new Date();
+            return 'Snow' + ':' + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+          },
           cb: function (e) {
             svg.node().style.background = "#fffafa";
           }
