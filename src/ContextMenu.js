@@ -37,7 +37,11 @@ export class ContextMenu {
     // calc size
     contextItems.append("text")
       .text(function (d) {
-        return d.label;
+        try {
+          return d.label();
+        } catch (e) {
+          return String(d.label);
+        }
       })
       .attr("class", "dummy-menu-label")
       .style("font-size", 11);
@@ -67,7 +71,7 @@ export class ContextMenu {
       .attr('width', width)
       .attr('height', height);
     contextItems.append("text")
-      .text(function (d, ) {
+      .text(function (d) {
         try {
           return d.label();
         } catch (e) {
