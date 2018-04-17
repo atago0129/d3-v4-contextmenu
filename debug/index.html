@@ -14,32 +14,35 @@
     svg,
     [
       {
+        label: "change to red",
+        onClick: function (e) {
+          svg.node().style.background = "#ff0000";
+        }
+      },
+      {
         label: "change color",
         items: [
           {
-            label: "red",
-            cb: function (e) {
-              svg.node().style.background = "#ff0000";
-            }
-          },
-          {
             label: "blue",
-            cb: function (e) {
+            onClick: function (e) {
               svg.node().style.background = "#0000ff";
             }
           },
           {
             label: "pink",
+            onClick: function(e) {
+              alert('pink is clicked!');
+            },
             items: [
               {
                 label: "deep pink",
-                cb: function (e) {
+                onClick: function (e) {
                   svg.node().style.background = "#ff1493";
                 }
               },
               {
                 label: "shocking pink",
-                cb: function (e) {
+                onClick: function (e) {
                   svg.node().style.background = "#fc0fc0";
                 }
               }
@@ -49,29 +52,11 @@
         ]
       },
       {
-        label: "red",
-        cb: function (e) {
-          svg.node().style.background = "#ff0000";
-        }
-      },
-      {
-        label: "deeppink",
-        cb: function (e) {
-          svg.node().style.background = "#ff1493";
-        }
-      },
-      {
-        label: "blue",
-        cb: function (e) {
-          svg.node().style.background = "#0000ff";
-        }
-      },
-      {
         label: function () {
           var date = new Date();
           return 'Snow' + ':' + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
         },
-        cb: function (e) {
+        onClick: function (e) {
           svg.node().style.background = "#fffafa";
         }
       }

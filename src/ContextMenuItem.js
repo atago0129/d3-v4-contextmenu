@@ -8,28 +8,37 @@ export class ContextMenuItem {
 
   label;
 
-  callback;
+  onClickHandler;
 
-  list;
+  childGroup;
 
-  constructor(id, label, callback, list) {
+  /**
+   * @param {string} id
+   * @param {string|function} label
+   * @param {function} onClickHandler
+   * @param {ContextMenuGroup} childGroup
+   */
+  constructor(id, label, onClickHandler, childGroup) {
     this.id = id;
     this.label = label;
-    this.callback = callback;
-    this.list = list;
+    this.onClickHandler = onClickHandler;
+    this.childGroup = childGroup;
   }
 
+  /**
+   * @returns {string}
+   */
   getLabel() {
     try {
-      return this.label() + (this.list === null ? '' : '    ▶');
+      return String(this.label());
     } catch (e) {
-      return String(this.label) + (this.list === null ? '' : '    ▶');
+      return String(this.label);
     }
   }
 
   onClick() {
-    if (this.callback !== null) {
-      this.callback();
+    if (this.onClickHandler !== null) {
+      this.onClickHandler();
     }
   }
 }
