@@ -9,42 +9,78 @@
 <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" src="/dist/d3-v4-contextmenu.min.js"></script>
 <script type="text/javascript">
-	var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
-	var contextMenu = new window.ContextMenu.default(
-      [
-        {
-          label: "red",
-          cb: function (e) {
-            svg.node().style.background = "#ff0000";
-          }
-        },
-        {
-          label: "deeppink",
-          cb: function (e) {
-            svg.node().style.background = "#ff1493";
-          }
-        },
-        {
-          label: "blue",
-          cb: function (e) {
-            svg.node().style.background = "#0000ff";
-          }
-        },
-        {
-          label: function () {
-            var date = new Date();
-            return 'Snow' + ':' + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+  var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
+  var contextMenu = new window.D3V4ContextMenu.default(
+    svg,
+    [
+      {
+        label: "change color",
+        items: [
+          {
+            label: "red",
+            cb: function (e) {
+              svg.node().style.background = "#ff0000";
+            }
           },
-          cb: function (e) {
-            svg.node().style.background = "#fffafa";
+          {
+            label: "blue",
+            cb: function (e) {
+              svg.node().style.background = "#0000ff";
+            }
+          },
+          {
+            label: "pink",
+            items: [
+              {
+                label: "deep pink",
+                cb: function (e) {
+                  svg.node().style.background = "#ff1493";
+                }
+              },
+              {
+                label: "shocking pink",
+                cb: function (e) {
+                  svg.node().style.background = "#fc0fc0";
+                }
+              }
+            ]
           }
+
+        ]
+      },
+      {
+        label: "red",
+        cb: function (e) {
+          svg.node().style.background = "#ff0000";
         }
-      ]
-	);
-	svg.on("contextmenu", function () {
-      d3.event.preventDefault();
-	  contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
-    });
+      },
+      {
+        label: "deeppink",
+        cb: function (e) {
+          svg.node().style.background = "#ff1493";
+        }
+      },
+      {
+        label: "blue",
+        cb: function (e) {
+          svg.node().style.background = "#0000ff";
+        }
+      },
+      {
+        label: function () {
+          var date = new Date();
+          return 'Snow' + ':' + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+        },
+        cb: function (e) {
+          svg.node().style.background = "#fffafa";
+        }
+      }
+    ]
+  );
+  svg.on("contextmenu", function () {
+    d3.event.preventDefault();
+    contextMenu.show(d3.mouse(this)[0] + 1, d3.mouse(this)[1] + 1);
+  });
 </script>
 
 </body>

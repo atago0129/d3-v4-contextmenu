@@ -1,96 +1,107 @@
 import * as d3 from "d3";
 
 export class ContextMenu {
-  menuItems = [];
+  svg;
+
+  labelMargin = 12;
+
+  showListIds = [];
+
+  /** {ContextMenuList} */
+  itemList;
 
   /**
-   * @constructor
-   * @param {list} menuItems - list of label and callback map of menu
+   * @param {d3.selection} svg
+   * @param {ContextMenuList} itemList
    */
-  constructor(menuItems) {
-    this.menuItems = menuItems;
+  constructor(svg, itemList) {
+    this.svg = svg;
+    this.itemList = itemList;
+  }
+
+  show(x, y) {
+    this.render(x, y, this.itemList);
   }
 
   /**
-   * show the original context menu.
-   * @param {d3.selection} svg
-   * @param {number} x
-   * @param {number} y
+   * @param {int} x
+   * @param {int} y
+   * @param {ContextMenuList} itemList
    */
-  show(svg, x, y) {
-    d3.select(".context-menu").remove();
-
-    svg.append("g").attr("class", "context-menu");
-    let contextMenu = d3.select(".context-menu").selectAll("rect").data(this.menuItems);
-    let contextItems = contextMenu.enter().append("g").attr("class", "menu-entry");
-    contextItems.style("cursor", "pointer");
-    contextItems.on("mouseover", function(){
-      d3.select(this).select('rect').style("fill", "rgb(200,200,200)");
+  render(x, y, itemList) {
+    this.showListIds = itemList.id;
+    let _this = this;
+    this.svg.append('g').attr('class', 'context-menu').attr('id', itemList.id);
+    let contextMenu = d3.select('#' + itemList.id).selectAll('rect').data(itemList.items);
+    let contextItems = contextMenu.enter().append('g').attr('class', 'menu-entry');
+    contextItems.style('cursor', 'pointer');
+    contextItems.on('mouseover', function (item) {
+      d3.select(this).select('rect').style("fill", item.onMouseoverFill);
+      if (item.list !== null) {
+        let bbox = d3.select(this).select('rect').node().getBBox();
+        _this.render(bbox.x + bbox.width, bbox.y, item.list);
+      }
     });
-    contextItems.on("mouseout", function(){
-      d3.select(this).select('rect')
-        .style("fill", "rgb(250,250,250)")
-        .style("stroke", "rgb(130,130,130)")
-        .style("stroke-width", "1px");
+    contextItems.on('mouseout', function (item) {
+      d3.select(this).select('rect').style("fill", item.defaultFill);
     });
 
-    // calc size
-    contextItems.append("text")
-      .text(function (d) {
-        try {
-          return d.label();
-        } catch (e) {
-          return String(d.label);
-        }
+    let labelSizes = itemList.items.reduce((sizes, item) => {
+      return sizes.concat(this.calculateLabelSize(item));
+    }, []);
+
+    let width = d3.max(labelSizes.map((size) => {
+      return size.width;
+    }));
+
+    contextItems.append('rect')
+      .style('fill', function (item) {
+        return item.defaultFill;
       })
-      .attr("class", "dummy-menu-label")
-      .style("font-size", 11);
-    let dummy = svg.selectAll(".dummy-menu-label")
-      .nodes()
-      .map(function (x) {
-        return x.getBBox();
-      });
-    let width = d3.max(dummy.map(function (x) {
-      return x.width;
-    }));
-    let margin = 0.05 * width;
-    width =  width + 2 * margin;
-    let height = d3.max(dummy.map(function (x) {
-      return x.height + margin / 2;
-    }));
-    d3.selectAll(".dummy-menu-label").remove();
-
-    // append and resize
-    contextItems.append("rect")
-      .style("fill", "rgb(250,250,250)")
-      .style("stroke", "rgb(130,130,130)")
-      .style("stroke-width", "1px")
-      .on("click", function (d) {d.cb();})
-      .attr("x", x)
-      .attr('y', function(d, i){return y + (i * height);})
+      .on('click', function (item) {
+        item.onClick();
+      })
+      .attr('x', x)
+      .attr('y', function (item, i) {
+        return y + (i * labelSizes[i].height);
+      })
       .attr('width', width)
-      .attr('height', height);
-    contextItems.append("text")
-      .text(function (d) {
-        try {
-          return d.label();
-        } catch (e) {
-          return String(d.label);
-        }
+      .attr('height', function (item, i) {
+        return labelSizes[i].height;
+      });
+    contextItems.append('text')
+      .text(function (item) {
+        return item.getLabel();
       })
       .attr("class", "dummy-menu-label")
       .style("fill", "rgb")
       .style("font-size", 11)
-      .on("click", function (d) {d.cb();})
+      .on("click", function (item) {
+        item.onClick();
+      })
       .attr('x', x)
-      .attr('y', function(d, i){return y + (i * height); })
-      .attr('dy', height - margin / 2)
-      .attr('dx', margin);
+      .attr('y', function(item, i){
+        return y + (i * labelSizes[i].height);
+      })
+      .attr('dy',function(item, i){
+        return labelSizes[i].height - _this.labelMargin / 2;
+      })
+      .attr('dx', width * 0.05);
+  }
 
-    // remove handler
-    d3.select('body')
-      .on('click', function() {
-        d3.select('.context-menu').remove();
-      });
+  /**
+   * @param {ContextMenuItem} item
+   * @returns {{width: number, height: number}}
+   */
+  calculateLabelSize(item) {
+    this.svg.append('g').attr('class', 'd3-v4-dummy');
+    let dummy = d3.select('.d3-v4-dummy').append('text').text(item.getLabel()).style('font-size', 11);
+    let width = dummy.node().getBBox().width + this.labelMargin;
+    let height = dummy.node().getBBox().height + this.labelMargin;
+    d3.selectAll('.d3-v4-dummy').remove();
+    return {
+      width: width,
+      height: height
+    };
   }
 }
