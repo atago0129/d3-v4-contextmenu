@@ -10,15 +10,15 @@ export class ContextMenu {
   svg;
 
   /** {ContextMenuGroup} */
-  itemList;
+  rootGroup;
 
   /**
    * @param {d3.selection} svg
-   * @param {ContextMenuGroup} itemList
+   * @param {ContextMenuGroup} rootGroup
    */
-  constructor(svg, itemList) {
+  constructor(svg, rootGroup) {
     this.svg = svg;
-    this.itemList = itemList;
+    this.rootGroup = rootGroup;
   }
 
   /**
@@ -27,7 +27,7 @@ export class ContextMenu {
    */
   show(x, y) {
     d3.selectAll('.context-menu').remove();
-    this.render(x, y, this.itemList);
+    this.render(x, y, this.rootGroup);
   }
 
   /**
