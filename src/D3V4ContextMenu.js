@@ -12,10 +12,6 @@ export class D3V4ContextMenu {
   constructor(svg, dataSets) {
     const factory = new ContextMenuFactory(svg);
     this.contextMenu = factory.factory(dataSets);
-    d3.select('body')
-      .on('click', function() {
-        d3.selectAll('.context-menu').remove();
-      });
   }
 
   /**

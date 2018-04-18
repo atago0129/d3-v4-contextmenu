@@ -35,6 +35,14 @@ export class ContextMenu {
    * @param {ContextMenuGroup} itemGroup
    */
   render(x, y, itemGroup) {
+    d3.select(document)
+      .on('click', function () {
+        if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
+          return;
+        }
+        d3.selectAll('.context-menu').remove();
+      });
+
     let _this = this;
 
     let labelSizes = itemGroup.items.reduce((sizes, item) => {
@@ -56,15 +64,16 @@ export class ContextMenu {
       .attr('width', width)
       .attr('height', function (item, i) {
         return labelSizes[i].height;
-      });
+      })
+      .classed('context-menu-unclickable', (item) => (item.onClickHandler === null));
 
     contextItems.style('cursor', 'default');
 
     contextItems.on('mouseover', function (item) {
       let itemSelection = d3.select(this);
       if (item.childGroup !== null) {
-        if (!itemSelection.classed('x-child-group-visible')) {
-          itemSelection.classed('x-child-group-visible', true);
+        if (!itemSelection.classed('child-group-visible')) {
+          itemSelection.classed('child-group-visible', true);
           _this.render(Number(itemSelection.attr('x')) + Number(itemSelection.attr('width')), Number(itemSelection.attr('y')), item.childGroup);
         }
       } else {
@@ -75,7 +84,7 @@ export class ContextMenu {
 
     contextItems.on('mouseout', function (item) {
       let itemSelection = d3.select(this);
-      if (!itemSelection.classed('x-child-group-visible')) {
+      if (!itemSelection.classed('child-group-visible')) {
         itemSelection.select('rect').style("fill", item.defaultFill);
       }
     });
@@ -99,7 +108,7 @@ export class ContextMenu {
       .style("fill", "rgb")
       .style("font-size", 11)
       .on("click", function (item) {
-        item.onClickHandler();
+        item.onClick();
       })
       .attr('x', '5px')
       .attr('y', '50%');
@@ -139,7 +148,7 @@ export class ContextMenu {
     items.map((item) => {
       let itemSelector = d3.select('#' + item.id);
       itemSelector.select('rect').style("fill", (item) => (item.defaultFill));
-      itemSelector.classed('x-child-group-visible', false);
+      itemSelector.classed('child-group-visible', false);
       if (item.childGroup === null) return;
       d3.select('#' + item.childGroup.id).remove();
       this.removeChildGroup(item.childGroup.items);
