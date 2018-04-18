@@ -4,9 +4,7 @@ export class ContextMenu {
 
   labelMargin = 12;
 
-  /**
-   * @param {d3.selection}
-   */
+  /** {d3.selection} */
   svg;
 
   /** {ContextMenuGroup} */
