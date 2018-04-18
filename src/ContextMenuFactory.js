@@ -35,7 +35,7 @@ export class ContextMenuFactory {
 
     dataSetList.map((dataSet) => {
       this.itemIdIndex++;
-      let itemId = 'd3_v4_context_menu_item_' + this.groupIdIndex;
+      let itemId = 'd3_v4_context_menu_item_' + this.itemIdIndex;
       if (!dataSet.hasOwnProperty('label') || (!dataSet.hasOwnProperty('onClick') && !dataSet.hasOwnProperty('items'))) {
         console.log('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
         return;

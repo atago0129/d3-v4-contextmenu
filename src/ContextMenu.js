@@ -25,7 +25,8 @@ export class ContextMenu {
    */
   show(x, y) {
     d3.selectAll('.context-menu').remove();
-    this.render(x, y, this.rootGroup);
+    const clickMargin = 1;
+    this.render(x + clickMargin, y + clickMargin, this.rootGroup);
   }
 
   /**
@@ -47,6 +48,7 @@ export class ContextMenu {
     this.svg.append('g').attr('class', 'context-menu').attr('id', itemGroup.id);
     let contextMenu = d3.select('#' + itemGroup.id).selectAll('rect').data(itemGroup.items);
     let contextItems = contextMenu.enter().append('svg').attr('class', 'menu-entry')
+      .attr('id', (item) => (item.id))
       .attr('x', x)
       .attr('y', function (item, i) {
         return y + (i * labelSizes[i].height);
@@ -59,17 +61,23 @@ export class ContextMenu {
     contextItems.style('cursor', 'default');
 
     contextItems.on('mouseover', function (item) {
-      d3.select(this).select('rect').style("fill", item.onMouseoverFill);
+      let itemSelection = d3.select(this);
       if (item.childGroup !== null) {
-        let menunEntry = d3.select(this);
-        _this.render(Number(menunEntry.attr('x')) + Number(menunEntry.attr('width')), Number(menunEntry.attr('y')), item.childGroup);
+        if (!itemSelection.classed('x-child-group-visible')) {
+          itemSelection.classed('x-child-group-visible', true);
+          _this.render(Number(itemSelection.attr('x')) + Number(itemSelection.attr('width')), Number(itemSelection.attr('y')), item.childGroup);
+        }
       } else {
         _this.removeChildGroup(itemGroup.items);
       }
+      itemSelection.select('rect').style("fill", item.onMouseoverFill);
     });
 
     contextItems.on('mouseout', function (item) {
-      d3.select(this).select('rect').style("fill", item.defaultFill);
+      let itemSelection = d3.select(this);
+      if (!itemSelection.classed('x-child-group-visible')) {
+        itemSelection.select('rect').style("fill", item.defaultFill);
+      }
     });
 
     contextItems.append('rect')
@@ -129,6 +137,9 @@ export class ContextMenu {
    */
   removeChildGroup(items) {
     items.map((item) => {
+      let itemSelector = d3.select('#' + item.id);
+      itemSelector.select('rect').style("fill", (item) => (item.defaultFill));
+      itemSelector.classed('x-child-group-visible', false);
       if (item.childGroup === null) return;
       d3.select('#' + item.childGroup.id).remove();
       this.removeChildGroup(item.childGroup.items);
