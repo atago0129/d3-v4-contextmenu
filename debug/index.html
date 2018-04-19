@@ -33,20 +33,22 @@
             onClick: function(e) {
               alert('pink is clicked!');
             },
-            items: [
-              {
-                label: "deep pink",
-                onClick: function (e) {
-                  svg.node().style.background = "#ff1493";
+            items: function() {
+              return [
+                {
+                  label: "deep pink",
+                  onClick: function (e) {
+                    svg.node().style.background = "#ff1493";
+                  }
+                },
+                {
+                  label: "shocking pink",
+                  onClick: function (e) {
+                    svg.node().style.background = "#fc0fc0";
+                  }
                 }
-              },
-              {
-                label: "shocking pink",
-                onClick: function (e) {
-                  svg.node().style.background = "#fc0fc0";
-                }
-              }
-            ]
+              ];
+            }
           }
 
         ]

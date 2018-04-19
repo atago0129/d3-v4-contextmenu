@@ -24,7 +24,7 @@ export class ContextMenuFactory {
   }
 
   /**
-   * @param {object[]} dataSetList
+   * @param {object[]|function} dataSetList
    * @returns {ContextMenuGroup}
    */
   parseList(dataSetList) {
@@ -32,6 +32,10 @@ export class ContextMenuFactory {
 
     this.groupIdIndex++;
     let groupId = 'd3_v4_context_menu_group_' + this.groupIdIndex;
+
+    try {
+      dataSetList = dataSetList();
+    } catch (e) {}
 
     dataSetList.map((dataSet) => {
       this.itemIdIndex++;
