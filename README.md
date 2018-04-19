@@ -57,27 +57,27 @@ var contextMenu = new window.ContextMenu.default(
 );
 svg.on("contextmenu", function () {
   d3.event.preventDefault();
-  contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
+  contextMenu.show(d3.mouse(this)[0], d3.mouse(this)[1]);
 });
 ```
 
 or 
 
 ```
-npm install d3-v4-contextmenu#master
+npm i @atago0129/d3-v4-contextmenu
 ```
 ```javascript
-import ContextMenu from "d3-v4-contextmenu";
+import ContextMenu from "@atago0129/d3-v4-contextmenu";
  
 ...
  
 let contextMenu = new ContextMenu([
   svg,
-  {lebel: "hoge", cb: callback}
+  {lebel: "hoge", onClick: callback}
 ]);
 svg.on("contextmenu", function () {
   d3.event.preventDefault();
-  contextMenu.show(svg, d3.mouse(this)[0], d3.mouse(this)[1]);
+  contextMenu.show(d3.mouse(this)[0], d3.mouse(this)[1]);
 });
 ```
 # Demo
