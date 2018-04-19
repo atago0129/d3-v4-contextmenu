@@ -11,7 +11,7 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: '[name].min.js',
-    library: 'ContextMenu',
+    library: 'D3V4ContextMenu',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
