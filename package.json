@@ -1,6 +1,6 @@
 {
   "name": "@atago0129/d3-v4-contextmenu",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "context menu with d3.js v4",
   "main": "lib/index.js",
   "scripts": {
