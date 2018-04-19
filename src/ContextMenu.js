@@ -23,6 +23,13 @@ export class ContextMenu {
   constructor(svg, rootGroup) {
     this.svg = svg;
     this.rootGroup = rootGroup;
+    d3.select(document)
+      .on('click', function () {
+        if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
+          return;
+        }
+        d3.selectAll('.context-menu').remove();
+      });
   }
 
   /**
@@ -40,14 +47,6 @@ export class ContextMenu {
    * @param {ContextMenuGroup} itemGroup
    */
   render(x, y, itemGroup) {
-    d3.select(document)
-      .on('click', function () {
-        if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
-          return;
-        }
-        d3.selectAll('.context-menu').remove();
-      });
-
     let _this = this;
 
     let labelSizes = itemGroup.items.reduce((sizes, item) => {
