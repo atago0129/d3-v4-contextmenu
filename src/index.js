@@ -1,3 +1,3 @@
-import {ContextMenu} from "./ContextMenu";
+import {D3V4ContextMenu} from "./D3V4ContextMenu";
 
-export default ContextMenu;
+export default D3V4ContextMenu;
