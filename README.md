@@ -64,7 +64,7 @@ svg.on("contextmenu", function () {
 or 
 
 ```
-npm install git+https://github.com/atago0129/d3-v4-contextmenu#master
+npm install d3-v4-contextmenu#master
 ```
 ```javascript
 import ContextMenu from "d3-v4-contextmenu";
