@@ -1,6 +1,6 @@
 {
   "name": "d3-v4-contextmenu",
-  "version": "0.2.0",
+  "version": "0.9.0",
   "description": "context menu with d3.js v4",
   "main": "lib/index.js",
   "scripts": {
@@ -12,7 +12,9 @@
     "url": "git+https://github.com/atago0129/d3-v4-contextmenu.git"
   },
   "keywords": [
-    "d3.js"
+    "d3.js",
+    "context-menu",
+    "contextmenu"
   ],
   "author": "atago0129",
   "license": "MIT",
