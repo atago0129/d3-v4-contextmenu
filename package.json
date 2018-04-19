@@ -12,7 +12,9 @@
     "url": "git+https://github.com/atago0129/d3-v4-contextmenu.git"
   },
   "keywords": [
-    "d3.js"
+    "d3.js",
+    "context-menu",
+    "contextmenu"
   ],
   "author": "atago0129",
   "license": "MIT",
