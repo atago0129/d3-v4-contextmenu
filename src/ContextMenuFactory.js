@@ -44,7 +44,7 @@ export class ContextMenuFactory {
         itemId,
         label,
         dataSet.hasOwnProperty('onClick') ? dataSet.onClick : null,
-        dataSet.hasOwnProperty('items') ? this.parseList(dataSet.items) : null)
+        (dataSet.hasOwnProperty('items') && Array.isArray(dataSet.items)) ? this.parseList(dataSet.items) : null)
       );
     });
     return new ContextMenuGroup(groupId, items);
