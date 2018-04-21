@@ -6,18 +6,15 @@ export class D3V4ContextMenu {
 
   /**
    *
-   * @param {d3.selection} svg
    * @param {object[]} dataSets
    */
-  constructor(svg, dataSets) {
-    const factory = new ContextMenuFactory(svg);
+  constructor(dataSets) {
+    const factory = new ContextMenuFactory();
     this.contextMenu = factory.factory(dataSets);
   }
 
   /**
    * show the original context menu.
-   * @param {number} x
-   * @param {number} y
    */
   show(x, y) {
     this.contextMenu.show(x, y);

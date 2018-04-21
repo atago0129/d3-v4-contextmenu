@@ -10,25 +10,20 @@ export class ContextMenu {
 
   drawMargin = 1;
 
-  /** {d3.selection} */
-  svg;
-
   /** {ContextMenuGroup} */
   rootGroup;
 
   /**
-   * @param {d3.selection} svg
    * @param {ContextMenuGroup} rootGroup
    */
-  constructor(svg, rootGroup) {
-    this.svg = svg;
+  constructor(rootGroup) {
     this.rootGroup = rootGroup;
     d3.select(document)
       .on('click', function () {
         if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
           return;
         }
-        d3.selectAll('.context-menu').remove();
+        d3.selectAll('.d3-v4-context-menu-container').remove();
       });
   }
 
@@ -37,7 +32,7 @@ export class ContextMenu {
    * @param {Number} y
    */
   show(x, y) {
-    d3.selectAll('.context-menu').remove();
+    d3.selectAll('.d3-v4-context-menu-container').remove();
     this.render(x + this.drawMargin, y + this.drawMargin, this.rootGroup);
   }
 
@@ -47,39 +42,46 @@ export class ContextMenu {
    * @param {ContextMenuGroup} itemGroup
    */
   render(x, y, itemGroup) {
-    let _this = this;
+    const _this = this;
 
-    let labelSizes = itemGroup.items.reduce((sizes, item) => {
-      return sizes.concat(this.calculateLabelSize(item));
-    }, []);
+    const labelSizes = itemGroup.items.reduce((sizes, item) => (sizes.concat(this.calculateLabelSize(item))), []);
 
-    let width = d3.max(labelSizes.map((size) => {
-      return size.width;
-    }));
+    const width = d3.max(labelSizes.map((size) => (size.width)));
 
-    this.svg.append('g').attr('class', 'context-menu').attr('id', itemGroup.id);
-    let contextMenu = d3.select('#' + itemGroup.id).selectAll('rect').data(itemGroup.items);
-    let contextItems = contextMenu.enter().append('svg').attr('class', 'item-entry')
+    const height = labelSizes.reduce((sum, size) => ({height: sum.height + size.height})).height;
+
+    const container = d3.select('body').append('div')
+      .style('width', width + 'px')
+      .style('height', height + 'px')
+      .style('left', x + 'px')
+      .style('top', y + 'px')
+      .style('position', 'absolute')
+      .classed('d3-v4-context-menu-container', true)
+      .attr('id', itemGroup.id);
+    const g = container.append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('x', 0)
+      .attr('y', 0)
+      .append('g');
+    const contextMenu = g.selectAll('rect').data(itemGroup.items);
+    const contextItems = contextMenu.enter().append('svg').attr('class', 'item-entry')
       .attr('id', (item) => (item.id))
-      .attr('x', x)
-      .attr('y', function (item, i) {
-        return y + (i * labelSizes[i].height);
-      })
+      .attr('x', 0)
+      .attr('y', (item, i) => (i * labelSizes[i].height))
       .attr('width', width)
-      .attr('height', function (item, i) {
-        return labelSizes[i].height;
-      })
+      .attr('height', (item, i) => (labelSizes[i].height))
       .classed('context-menu-unclickable', (item) => (item.onClickHandler === null));
 
     contextItems.style('cursor', 'default');
 
     contextItems.on('mouseover', function (item) {
-      let itemSelection = d3.select(this);
+      const itemSelection = d3.select(this);
       if (item.childGroup !== null) {
         if (!itemSelection.classed('child-group-visible')) {
           // show nested menu group
           itemSelection.classed('child-group-visible', true);
-          _this.render(Number(itemSelection.attr('x')) + Number(itemSelection.attr('width')) - _this.drawMargin * 3, Number(itemSelection.attr('y')) + _this.drawMargin * 3, item.childGroup);
+          _this.render(x + Number(itemSelection.attr('x')) + Number(itemSelection.attr('width')) - _this.drawMargin * 3, y + Number(itemSelection.attr('y')) + _this.drawMargin * 3, item.childGroup);
         }
       } else {
         // remove nested menu group
@@ -89,48 +91,35 @@ export class ContextMenu {
     });
 
     contextItems.on('mouseout', function (item) {
-      let itemSelection = d3.select(this);
+      const itemSelection = d3.select(this);
       if (!itemSelection.classed('child-group-visible')) { // ignore parent of visible nested group
         itemSelection.select('rect').style("fill", item.defaultFill);
       }
     });
 
     contextItems.append('rect')
-      .style('fill', function (item) {
-        return item.defaultFill;
-      })
-      .on('click', function (item) {
-        item.onClick();
-      })
+      .style('fill', (item) => (item.defaultFill))
+      .on('click', (item) => (item.onClick()))
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', '100%')
       .attr('height', '100%');
     contextItems.append('text')
-      .text(function (item) {
-        return item.getLabel();
-      })
+      .text((item) => (item.getLabel()))
       .attr("class", "item-label")
       .style("fill", "rgb")
       .style("font-size", 11)
-      .on("click", function (item) {
-        item.onClick();
-      })
+      .on('click', (item) => (item.onClick()))
       .attr('x', '5px')
       .attr('y', '50%');
     contextItems.append('text')
-      .text(function (item) {
-        if (item.childGroup !== null) {
-          return '>';
-        }
-        return null;
-      })
+      .text((item) => (item.childGroup !== null ? '>' : null))
       .attr('x', '100%')
       .attr('y', '50%')
       .style("font-size", 11)
       .attr('transform', 'translate(-12, 0)');
 
-    this.drawBorder(d3.select('#' + itemGroup.id));
+    this.drawBorder(g);
   }
 
   /**
@@ -138,10 +127,10 @@ export class ContextMenu {
    * @returns {{width: number, height: number}}
    */
   calculateLabelSize(item) {
-    this.svg.append('g').attr('class', 'd3-v4-dummy');
-    let dummy = d3.select('.d3-v4-dummy').append('text').text(item.getLabel()).style('font-size', 11);
-    let width = dummy.node().getBBox().width + this.labelMargin + (item.childGroup !== null ? 15 : 0);
-    let height = dummy.node().getBBox().height + this.labelMargin;
+    const g = d3.select('body').append('svg').attr('class', 'd3-v4-dummy').append('g');
+    const dummy = g.append('text').text(item.getLabel()).style('font-size', 11);
+    const width = dummy.node().getBBox().width + this.labelMargin + (item.childGroup !== null ? 15 : 0);
+    const height = dummy.node().getBBox().height + this.labelMargin;
     d3.selectAll('.d3-v4-dummy').remove();
     return {
       width: width,
@@ -154,7 +143,7 @@ export class ContextMenu {
    */
   removeChildGroup(items) {
     items.map((item) => {
-      let itemSelector = d3.select('#' + item.id);
+      const itemSelector = d3.select('#' + item.id);
       itemSelector.select('rect').style("fill", (item) => (item.defaultFill));
       itemSelector.classed('child-group-visible', false);
       if (item.childGroup === null) return;
@@ -167,7 +156,7 @@ export class ContextMenu {
    * @param {d3.selection} groupSelection
    */
   drawBorder(groupSelection) {
-    let groupBox = groupSelection.node().getBBox();
+    const groupBox = groupSelection.node().getBBox();
     groupSelection.append('rect')
       .attr('x', groupBox.x)
       .attr('y', groupBox.y)

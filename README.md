@@ -1,11 +1,13 @@
 # d3-v4-contextmenu
 context menu with d3.js v4.
 
+# Demo
+http://plnkr.co/edit/i84SdzHnhKwHgZB21lpe?p=info
+
 # Useage
 ```javascript
 var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
-var contextMenu = new window.ContextMenu.default(
-  svg,
+var contextMenu = new window.D3V4ContextMenu.default(
   [
     {
       label: "change to red",
@@ -27,21 +29,24 @@ var contextMenu = new window.ContextMenu.default(
           onClick: function(e) {
             alert('pink is clicked!');
           },
-          items: [
-            {
-              label: "deep pink",
-              onClick: function (e) {
-                svg.node().style.background = "#ff1493";
+          items: function() {
+            return [
+              {
+                label: "deep pink",
+                onClick: function (e) {
+                  svg.node().style.background = "#ff1493";
+                }
+              },
+              {
+                label: "shocking pink",
+                onClick: function (e) {
+                  svg.node().style.background = "#fc0fc0";
+                }
               }
-            },
-            {
-              label: "shocking pink",
-              onClick: function (e) {
-                svg.node().style.background = "#fc0fc0";
-              }
-            }
-          ]
+            ];
+          }
         }
+
       ]
     },
     {
@@ -80,5 +85,3 @@ svg.on("contextmenu", function () {
   contextMenu.show(d3.mouse(this)[0], d3.mouse(this)[1]);
 });
 ```
-# Demo
-http://plnkr.co/edit/i84SdzHnhKwHgZB21lpe?p=info

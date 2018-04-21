@@ -3,24 +3,16 @@ import {ContextMenuItem} from "./ContextMenuItem";
 import {ContextMenu} from "./ContextMenu";
 
 export class ContextMenuFactory {
-  svg;
 
   itemIdIndex = 0;
   groupIdIndex = 0;
-
-  /**
-   * @param {d3.selection} svg
-   */
-  constructor(svg) {
-    this.svg = svg;
-  }
 
   /**
    * @param {object[]} dataSets
    * @returns {ContextMenu}
    */
   factory(dataSets) {
-    return new ContextMenu(this.svg, this.parseList(dataSets));
+    return new ContextMenu(this.parseList(dataSets));
   }
 
   /**
