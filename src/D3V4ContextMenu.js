@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import {ContextMenuFactory} from "./ContextMenuFactory";
 
 export class D3V4ContextMenu {

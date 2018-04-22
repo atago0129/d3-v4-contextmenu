@@ -1,12 +1,6 @@
 {
   "presets": [
-    ["env", {
-      "modules": false,
-      "loose": true,
-      "targets": {
-        "browsers": "last 2 versions"
-      }
-    }]
+    "es2015-rollup"
   ],
   "plugins": [
     "babel-plugin-transform-class-properties"

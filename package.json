@@ -4,8 +4,7 @@
   "description": "context menu with d3.js v4",
   "main": "lib/index.js",
   "scripts": {
-    "build": "webpack && babel --out-dir lib src",
-    "debug": "webpack-dev-server --progress --colors --hot"
+    "build": "rollup -c rollup.config.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +30,12 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "rollup": "^0.58.1",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
     "style-loader": "^0.18.2",
     "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.2"
