@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3'], factory) :
   (factory((global.d3 = global.d3 || {}),global.d3));
-}(this, (function (exports,d3$1) { 'use strict';
+}(this, (function (exports,d3) { 'use strict';
 
   var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -105,11 +105,11 @@
       this.drawMargin = 1;
 
       this.rootGroup = rootGroup;
-      d3$1.select(document).on('click', function () {
-        if (d3$1.select(d3$1.event.target.parentNode).classed('context-menu-unclickable')) {
+      d3.select(document).on('click', function () {
+        if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
           return;
         }
-        d3$1.selectAll('.d3-v4-context-menu-container').remove();
+        d3.selectAll('.d3-v4-context-menu-container').remove();
       });
     }
 
@@ -125,7 +125,7 @@
     createClass(ContextMenu, [{
       key: 'show',
       value: function show(x, y) {
-        d3$1.selectAll('.d3-v4-context-menu-container').remove();
+        d3.selectAll('.d3-v4-context-menu-container').remove();
         this.render(x + this.drawMargin, y + this.drawMargin, this.rootGroup);
       }
 
@@ -146,7 +146,7 @@
           return sizes.concat(_this2.calculateLabelSize(item));
         }, []);
 
-        var width = d3$1.max(labelSizes.map(function (size) {
+        var width = d3.max(labelSizes.map(function (size) {
           return size.width;
         }));
 
@@ -154,7 +154,7 @@
           return { height: sum.height + size.height };
         }).height;
 
-        var container = d3$1.select('body').append('div').style('width', width + 'px').style('height', height + 'px').style('left', x + 'px').style('top', y + 'px').style('position', 'absolute').classed('d3-v4-context-menu-container', true).attr('id', itemGroup.id);
+        var container = d3.select('body').append('div').style('width', width + 'px').style('height', height + 'px').style('left', x + 'px').style('top', y + 'px').style('position', 'absolute').classed('d3-v4-context-menu-container', true).attr('id', itemGroup.id);
         var g = container.append('svg').attr('width', '100%').attr('height', '100%').attr('x', 0).attr('y', 0).append('g');
         var contextMenu = g.selectAll('rect').data(itemGroup.items);
         var contextItems = contextMenu.enter().append('svg').attr('class', 'item-entry').attr('id', function (item) {
@@ -170,7 +170,7 @@
         contextItems.style('cursor', 'default');
 
         contextItems.on('mouseover', function (item) {
-          var itemSelection = d3$1.select(this);
+          var itemSelection = d3.select(this);
           if (item.childGroup !== null) {
             if (!itemSelection.classed('child-group-visible')) {
               // show nested menu group
@@ -185,7 +185,7 @@
         });
 
         contextItems.on('mouseout', function (item) {
-          var itemSelection = d3$1.select(this);
+          var itemSelection = d3.select(this);
           if (!itemSelection.classed('child-group-visible')) {
             // ignore parent of visible nested group
             itemSelection.select('rect').style("fill", item.defaultFill);
@@ -217,11 +217,11 @@
     }, {
       key: 'calculateLabelSize',
       value: function calculateLabelSize(item) {
-        var g = d3$1.select('body').append('svg').attr('class', 'd3-v4-dummy').append('g');
+        var g = d3.select('body').append('svg').attr('class', 'd3-v4-dummy').append('g');
         var dummy = g.append('text').text(item.getLabel()).style('font-size', 11);
         var width = dummy.node().getBBox().width + this.labelMargin + (item.childGroup !== null ? 15 : 0);
         var height = dummy.node().getBBox().height + this.labelMargin;
-        d3$1.selectAll('.d3-v4-dummy').remove();
+        d3.selectAll('.d3-v4-dummy').remove();
         return {
           width: width,
           height: height
@@ -238,13 +238,13 @@
         var _this3 = this;
 
         items.map(function (item) {
-          var itemSelector = d3$1.select('#' + item.id);
+          var itemSelector = d3.select('#' + item.id);
           itemSelector.select('rect').style("fill", function (item) {
             return item.defaultFill;
           });
           itemSelector.classed('child-group-visible', false);
           if (item.childGroup === null) return;
-          d3$1.select('#' + item.childGroup.id).remove();
+          d3.select('#' + item.childGroup.id).remove();
           _this3.removeChildGroup(item.childGroup.items);
         });
       }

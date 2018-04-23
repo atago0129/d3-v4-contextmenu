@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import {D3V4ContextMenu} from "./D3V4ContextMenu";
 
 export default function (items) {
