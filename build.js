@@ -13,11 +13,11 @@ rollup
     ]
   })
   .then(bundle => {
-    bundle.write({ format: 'es', file: `dist/${name}.es6.js` });
+    bundle.write({ format: 'es', file: `lib/index.js` });
     bundle.write({ format: 'amd', file: `dist/${name}.amd.js` });
     bundle.write({ format: 'cjs', file: `dist/${name}.cjs.js` });
     bundle.write({
-      format: 'umd',
+      format: 'iife',
       file: `dist/${name}.js`,
       name: 'd3',
       globals: {
