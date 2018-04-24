@@ -1,5 +1,8 @@
-(function (exports,d3) {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'd3'], factory) :
+  (factory((global.d3 = global.d3 || {}),global.d3));
+}(this, (function (exports,d3) { 'use strict';
 
   var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -350,4 +353,6 @@
 
   exports.contextmenu = d3V4Contextmenu;
 
-}((this.d3 = this.d3 || {}),d3));
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
