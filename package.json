@@ -1,10 +1,10 @@
 {
   "name": "@atago0129/d3-v4-contextmenu",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "context menu with d3.js v4",
-  "main": "dist/d3-v4-contextmenu.js",
+  "main": "dist/d3-v4-contextmenu.es6.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js"
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
