@@ -4,11 +4,18 @@ context menu with d3.js v4.
 # Demo
 http://plnkr.co/edit/i84SdzHnhKwHgZB21lpe?p=info
 
+# Install
+```
+npm i @atago0129/d3-v4-contextmenu
+```
+
 # Useage
-```javascript
-var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
-var contextMenu = new window.D3V4ContextMenu.default(
-  [
+```html
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="./dist/d3-v4-contextmenu.js"></script>
+<script type="text/javascript">
+  var svg = d3.select("#main").append("svg").attr("width", 500).attr("height", 400);
+  var items = [
     {
       label: "change to red",
       onClick: function (e) {
@@ -58,30 +65,13 @@ var contextMenu = new window.D3V4ContextMenu.default(
         svg.node().style.background = "#fffafa";
       }
     }
-  ]
-);
-svg.on("contextmenu", function () {
-  d3.event.preventDefault();
-  contextMenu.show(d3.mouse(this)[0], d3.mouse(this)[1]);
-});
+  ];
+  svg.on("contextmenu", d3.contextmenu(items));
+</script>
 ```
+or
+```ecmascript 6
+import {contextmenu} from "@atago0129/d3-v4-contextmenu";
 
-or 
-
-```
-npm i @atago0129/d3-v4-contextmenu
-```
-```javascript
-import ContextMenu from "@atago0129/d3-v4-contextmenu";
- 
-...
- 
-let contextMenu = new ContextMenu([
-  svg,
-  {lebel: "hoge", onClick: callback}
-]);
-svg.on("contextmenu", function () {
-  d3.event.preventDefault();
-  contextMenu.show(d3.mouse(this)[0], d3.mouse(this)[1]);
-});
+svg.on('contextmenu', contextmenu(items));
 ```
