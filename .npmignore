@@ -1,5 +1,4 @@
 src/
-dist/
 node_modules/
 .babelrc
 .gitignore
