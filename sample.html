@@ -40,8 +40,11 @@
                 }
               },
               {
-                label: "shocking pink",
-                onClick: function (e) {
+                label() {
+                  return "shocking pink";
+                },
+
+                onClick() {
                   svg.node().style.background = "#fc0fc0";
                 }
               }

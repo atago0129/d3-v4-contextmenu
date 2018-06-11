@@ -304,13 +304,65 @@
         dataSetList.map(function (dataSet) {
           _this.itemIdIndex++;
           var itemId = 'd3_v4_context_menu_item_' + _this.itemIdIndex;
-          if (!dataSet.hasOwnProperty('label') || !dataSet.hasOwnProperty('onClick') && !dataSet.hasOwnProperty('items')) {
+          var label = ContextMenuFactory.getLabel(dataSet);
+          var onClick = ContextMenuFactory.getOnClick(dataSet);
+          var children = ContextMenuFactory.getItems(dataSet);
+          if (label === null || onClick === null && children === null) {
             throw new Error('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
           }
-          var label = dataSet.label;
-          items.push(new ContextMenuItem(itemId, label, dataSet.hasOwnProperty('onClick') ? dataSet.onClick : null, dataSet.hasOwnProperty('items') && dataSet.items !== null ? _this.parseList(dataSet.items) : null));
+          items.push(new ContextMenuItem(itemId, label, onClick !== null ? onClick : null, children !== null ? _this.parseList(children) : null));
         });
         return new ContextMenuGroup(groupId, items);
+      }
+
+      /**
+       * @param {object} dataSet
+       * @returns {string|null}
+       */
+
+    }], [{
+      key: "getLabel",
+      value: function getLabel(dataSet) {
+        if (dataSet.hasOwnProperty('label')) {
+          if (typeof dataSet.label === 'function') {
+            return String(dataSet.label());
+          } else {
+            return dataSet.label;
+          }
+        }
+        return null;
+      }
+
+      /**
+       * @param {object} dataSet
+       * @returns {function|null}
+       */
+
+    }, {
+      key: "getOnClick",
+      value: function getOnClick(dataSet) {
+        if (dataSet.hasOwnProperty('onClick')) {
+          return dataSet.onClick;
+        }
+        return null;
+      }
+
+      /**
+       * @param {object} dataSet
+       * @returns {object[]|null}
+       */
+
+    }, {
+      key: "getItems",
+      value: function getItems(dataSet) {
+        if (dataSet.hasOwnProperty('items')) {
+          if (typeof dataSet.items === 'function') {
+            return dataSet.items();
+          } else {
+            return dataSet.items;
+          }
+        }
+        return null;
       }
     }]);
     return ContextMenuFactory;

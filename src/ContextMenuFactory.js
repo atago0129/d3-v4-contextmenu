@@ -32,17 +32,61 @@ export class ContextMenuFactory {
     dataSetList.map((dataSet) => {
       this.itemIdIndex++;
       let itemId = 'd3_v4_context_menu_item_' + this.itemIdIndex;
-      if (!dataSet.hasOwnProperty('label') || (!dataSet.hasOwnProperty('onClick') && !dataSet.hasOwnProperty('items'))) {
+      const label = ContextMenuFactory.getLabel(dataSet);
+      const onClick = ContextMenuFactory.getOnClick(dataSet);
+      const children = ContextMenuFactory.getItems(dataSet);
+      if (label === null || (onClick === null && children === null)) {
         throw new Error('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
       }
-      let label = dataSet.label;
       items.push(new ContextMenuItem(
         itemId,
         label,
-        dataSet.hasOwnProperty('onClick') ? dataSet.onClick : null,
-        (dataSet.hasOwnProperty('items') && dataSet.items !== null) ? this.parseList(dataSet.items) : null)
-      );
+        onClick !== null ? onClick : null,
+        children !== null ? this.parseList(children) : null
+      ));
     });
     return new ContextMenuGroup(groupId, items);
   }
+
+  /**
+   * @param {object} dataSet
+   * @returns {string|null}
+   */
+  static getLabel(dataSet) {
+    if (dataSet.hasOwnProperty('label')) {
+      if (typeof dataSet.label === 'function') {
+        return String(dataSet.label());
+      } else {
+        return dataSet.label;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param {object} dataSet
+   * @returns {function|null}
+   */
+  static getOnClick(dataSet) {
+    if (dataSet.hasOwnProperty('onClick')) {
+      return dataSet.onClick;
+    }
+    return null;
+  }
+
+  /**
+   * @param {object} dataSet
+   * @returns {object[]|null}
+   */
+  static getItems(dataSet) {
+    if (dataSet.hasOwnProperty('items')) {
+      if (typeof dataSet.items === 'function') {
+        return dataSet.items();
+      } else {
+        return dataSet.items;
+      }
+    }
+    return null;
+  }
+
 }
