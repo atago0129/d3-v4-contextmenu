@@ -18,7 +18,7 @@ npm i @atago0129/d3-v4-contextmenu
   var items = [
     {
       label: "change to red",
-      onClick: function (e) {
+      action: function (e) {
         svg.node().style.background = "#ff0000";
       }
     },
@@ -27,26 +27,26 @@ npm i @atago0129/d3-v4-contextmenu
       items: [
         {
           label: "blue",
-          onClick: function (e) {
+          action: function (e) {
             svg.node().style.background = "#0000ff";
           }
         },
         {
           label: "pink",
-          onClick: function(e) {
+          action: function(e) {
             alert('pink is clicked!');
           },
           items: function() {
             return [
               {
                 label: "deep pink",
-                onClick: function (e) {
+                action: function (e) {
                   svg.node().style.background = "#ff1493";
                 }
               },
               {
                 label: "shocking pink",
-                onClick: function (e) {
+                action: function (e) {
                   svg.node().style.background = "#fc0fc0";
                 }
               }
@@ -61,7 +61,7 @@ npm i @atago0129/d3-v4-contextmenu
         var date = new Date();
         return 'Snow' + ':' + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
       },
-      onClick: function (e) {
+      action: function (e) {
         svg.node().style.background = "#fffafa";
       }
     }

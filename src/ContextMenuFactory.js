@@ -4,6 +4,8 @@ import {ContextMenu} from "./ContextMenu";
 
 export class ContextMenuFactory {
 
+  contextMenu;
+
   itemIdIndex = 0;
   groupIdIndex = 0;
 
@@ -12,15 +14,19 @@ export class ContextMenuFactory {
    * @returns {ContextMenu}
    */
   factory(dataSets) {
-    return new ContextMenu(this.parseList(dataSets));
+    this.contextMenu = new ContextMenu();
+    this.parseList(null, dataSets, 0);
+    return this.contextMenu;
   }
 
   /**
+   * @param {null|string} parentItemId
    * @param {object[]|function} dataSetList
+   * @param {number} nestedIndex
    * @returns {ContextMenuGroup}
    */
-  parseList(dataSetList) {
-    let items = [];
+  parseList(parentItemId, dataSetList, nestedIndex) {
+    let itemIds = [];
 
     this.groupIdIndex++;
     let groupId = 'd3_v4_context_menu_group_' + this.groupIdIndex;
@@ -29,23 +35,28 @@ export class ContextMenuFactory {
       dataSetList = dataSetList();
     } catch (e) {}
 
+    this.contextMenu.pushGroup(new ContextMenuGroup(groupId, parentItemId, nestedIndex));
+
     dataSetList.map((dataSet) => {
       this.itemIdIndex++;
       let itemId = 'd3_v4_context_menu_item_' + this.itemIdIndex;
       const label = ContextMenuFactory.getLabel(dataSet);
-      const onClick = ContextMenuFactory.getOnClick(dataSet);
+      const action = ContextMenuFactory.getAction(dataSet);
       const children = ContextMenuFactory.getItems(dataSet);
-      if (label === null || (onClick === null && children === null)) {
+      if (label === null || (action === null && children === null)) {
         throw new Error('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
       }
-      items.push(new ContextMenuItem(
+      itemIds.push(itemId);
+      this.contextMenu.pushItem(new ContextMenuItem(
         itemId,
+        groupId,
         label,
-        onClick !== null ? onClick : null,
-        children !== null ? this.parseList(children) : null
+        action !== null ? action : null
       ));
+      if (children !== null) {
+        this.parseList(itemId, children, nestedIndex + 1);
+      }
     });
-    return new ContextMenuGroup(groupId, items);
   }
 
   /**
@@ -67,7 +78,11 @@ export class ContextMenuFactory {
    * @param {object} dataSet
    * @returns {function|null}
    */
-  static getOnClick(dataSet) {
+  static getAction(dataSet) {
+    if (dataSet.hasOwnProperty('action')) {
+      return dataSet.action;
+    }
+    // backward compatibility
     if (dataSet.hasOwnProperty('onClick')) {
       return dataSet.onClick;
     }

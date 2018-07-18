@@ -1,7 +1,8 @@
 import {ContextMenuFactory} from "./ContextMenuFactory";
+import {ContextMenuCanvas} from "./ContextMenuCanvas";
 
 export class D3V4ContextMenu {
-  contextMenu;
+  canvas;
 
   /**
    *
@@ -9,13 +10,13 @@ export class D3V4ContextMenu {
    */
   constructor(dataSets) {
     const factory = new ContextMenuFactory();
-    this.contextMenu = factory.factory(dataSets);
+    this.canvas = new ContextMenuCanvas(factory.factory(dataSets));
   }
 
   /**
    * show the original context menu.
    */
   show(x, y) {
-    this.contextMenu.show(x, y);
+    this.canvas.show(x, y);
   }
 }
