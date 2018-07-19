@@ -6,23 +6,23 @@ export class ContextMenuItem {
 
   id;
 
+  groupId;
+
   label;
 
-  onClickHandler;
-
-  childGroup;
+  action;
 
   /**
    * @param {string} id
+   * @param {string} groupId
    * @param {string|function} label
-   * @param {function} onClickHandler
-   * @param {ContextMenuGroup} childGroup
+   * @param {function} action
    */
-  constructor(id, label, onClickHandler, childGroup) {
+  constructor(id, groupId, label, action) {
     this.id = id;
+    this.groupId = groupId;
     this.label = label;
-    this.onClickHandler = onClickHandler;
-    this.childGroup = childGroup;
+    this.action = action;
   }
 
   /**
@@ -37,8 +37,8 @@ export class ContextMenuItem {
   }
 
   onClick() {
-    if (this.onClickHandler !== null) {
-      this.onClickHandler();
+    if (this.action !== null) {
+      this.action();
     }
   }
 }

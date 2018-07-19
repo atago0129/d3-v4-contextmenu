@@ -3,15 +3,28 @@ export class ContextMenuGroup {
   /** {string} */
   id;
 
-  /** {ContextMenuItem[]} */
-  items = [];
+  /** {string} */
+  parentItemId;
+
+  /** {number} */
+  nestedIndex;
 
   /**
    * @param {string} id
-   * @param {ContextMenuItem[]} items
+   * @param {string|null} parentItemId
+   * @param {number} nestedIndex
    */
-  constructor(id, items) {
+  constructor(id, parentItemId, nestedIndex) {
     this.id = id;
-    this.items = items;
+    this.parentItemId = parentItemId;
+    this.nestedIndex = nestedIndex;
+  }
+
+  /**
+   * @param {ContextMenuItem} item
+   * @returns {boolean}
+   */
+  match(item) {
+    return item.groupId === this.id;
   }
 }
