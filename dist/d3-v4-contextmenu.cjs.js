@@ -87,24 +87,34 @@ var ContextMenuItem = function () {
   }
 
   /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
    * @returns {string}
    */
 
 
   createClass(ContextMenuItem, [{
     key: 'getLabel',
-    value: function getLabel() {
+    value: function getLabel(d, i, elm) {
       try {
-        return String(this.label());
+        return String(this.label.bind(elm, d, i)());
       } catch (e) {
         return String(this.label);
       }
     }
+
+    /**
+     * @param {*} d
+     * @param {number} i
+     * @param {HTMLElement} elm
+     */
+
   }, {
     key: 'onClick',
-    value: function onClick() {
+    value: function onClick(d, i, elm) {
       if (this.action !== null) {
-        this.action();
+        this.action.bind(elm, d, i)();
       }
     }
   }]);
@@ -112,25 +122,43 @@ var ContextMenuItem = function () {
 }();
 
 var ContextMenu = function () {
-  function ContextMenu() {
+
+  /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
+   */
+
+
+  /** {ContextMenuGroup[]} */
+
+
+  /** {number} */
+  function ContextMenu(d, i, elm) {
     classCallCheck(this, ContextMenu);
     this._groups = [];
     this._items = [];
+
+    this.d = d;
+    this.i = i;
+    this.elm = elm;
   }
 
-  /** {ContextMenuGroup[]} */
+  /**
+   * @param {ContextMenuGroup} group
+   */
 
 
   /** {ContextMenuItem[]} */
 
 
+  /** {HTMLElement} */
+
+  /** {*} */
+
+
   createClass(ContextMenu, [{
     key: "pushGroup",
-
-
-    /**
-     * @param {ContextMenuGroup} group
-     */
     value: function pushGroup(group) {
       this._groups.push(group);
     }
@@ -222,11 +250,14 @@ var ContextMenuFactory = function () {
 
 
     /**
+     * @param {*} d
+     * @param {number} i
+     * @param {HTMLElement} elm
      * @param {object[]} dataSets
      * @returns {ContextMenu}
      */
-    value: function factory(dataSets) {
-      this.contextMenu = new ContextMenu();
+    value: function factory(dataSets, d, i, elm) {
+      this.contextMenu = new ContextMenu(d, i, elm);
       this.parseList(null, dataSets, 0);
       return this.contextMenu;
     }
@@ -259,7 +290,7 @@ var ContextMenuFactory = function () {
         var action = ContextMenuFactory.getAction(dataSet);
         var children = ContextMenuFactory.getItems(dataSet);
         if (label === null || action === null && children === null) {
-          throw new Error('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
+          throw new Error('Error!! ' + JSON.stringify(dataSet) + ' can not parse.');
         }
         _this.contextMenu.pushItem(new ContextMenuItem(itemId, groupId, label, action !== null ? action : null));
         if (children !== null) {
@@ -277,11 +308,7 @@ var ContextMenuFactory = function () {
     key: "getLabel",
     value: function getLabel(dataSet) {
       if (dataSet.hasOwnProperty('label')) {
-        if (typeof dataSet.label === 'function') {
-          return String(dataSet.label());
-        } else {
-          return dataSet.label;
-        }
+        return dataSet.label;
       }
       return null;
     }
@@ -331,6 +358,8 @@ var ContextMenuCanvas = function () {
    * @param {ContextMenu} contextMenu
    */
   function ContextMenuCanvas(contextMenu) {
+    var _this2 = this;
+
     classCallCheck(this, ContextMenuCanvas);
     this.labelMargin = 12;
     this.borderColor = 'rgb(140, 140, 140)';
@@ -339,7 +368,7 @@ var ContextMenuCanvas = function () {
 
     this.contextMenu = contextMenu;
     d3.select(document).on('click', function () {
-      if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
+      if (d3.select(_this2.contextMenu.elm.parentNode).classed('context-menu-unclickable')) {
         return;
       }
       d3.selectAll('.d3-v4-context-menu-container').remove();
@@ -368,14 +397,14 @@ var ContextMenuCanvas = function () {
   }, {
     key: 'render',
     value: function render(x, y, group) {
-      var _this2 = this;
+      var _this3 = this;
 
       var _this = this;
 
       var groupItems = this.contextMenu.getItemsByGroup(group);
 
       var labelSizes = groupItems.reduce(function (sizes, item) {
-        return sizes.concat(_this2.calculateLabelSize(item));
+        return sizes.concat(_this3.calculateLabelSize(item));
       }, []);
 
       var width = d3.max(labelSizes.map(function (size) {
@@ -430,15 +459,15 @@ var ContextMenuCanvas = function () {
       contextItems.append('rect').style('fill', function (item) {
         return item.defaultFill;
       }).on('click', function (item) {
-        return item.action();
+        return item.onClick(_this3.contextMenu.d, _this3.contextMenu.i, _this3.contextMenu.elm);
       }).attr('x', 0).attr('y', 0).attr('width', '100%').attr('height', '100%');
       contextItems.append('text').text(function (item) {
-        return item.getLabel();
+        return item.getLabel(_this3.contextMenu.d, _this3.contextMenu.i, _this3.contextMenu.elm);
       }).attr("class", "item-label").style("fill", "rgb").style("font-size", 11).on('click', function (item) {
-        return item.action();
+        return item.onClick(_this3.contextMenu.d, _this3.contextMenu.i, _this3.contextMenu.elm);
       }).attr('x', '5px').attr('y', '50%');
       contextItems.append('text').text(function (item) {
-        return _this2.contextMenu.getGroupByParentItem(item) !== null ? '>' : null;
+        return _this3.contextMenu.getGroupByParentItem(item) !== null ? '>' : null;
       }).attr('x', '100%').attr('y', '50%').style("font-size", 11).attr('transform', 'translate(-12, 0)');
 
       this.drawBorder(g);
@@ -470,11 +499,11 @@ var ContextMenuCanvas = function () {
   }, {
     key: 'removeSameNestedGroups',
     value: function removeSameNestedGroups(targetGroup) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.contextMenu.getGroupsByNestedIndex(targetGroup.nestedIndex).map(function (group) {
         if (targetGroup === group) return;
-        _this3.removeChildren(group);
+        _this4.removeChildren(group);
         d3.select('#' + group.id).remove();
         d3.select('#' + group.parentItemId).classed('child-group-visible', false).select('rect').style("fill", function (item) {
           return item.defaultFill;
@@ -489,7 +518,7 @@ var ContextMenuCanvas = function () {
   }, {
     key: 'removeChildren',
     value: function removeChildren(group) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.contextMenu.getItemsByGroup(group).map(function (item) {
         var itemSelector = d3.select('#' + item.id);
@@ -497,10 +526,10 @@ var ContextMenuCanvas = function () {
           return item.defaultFill;
         });
         itemSelector.classed('child-group-visible', false);
-        var childGroup = _this4.contextMenu.getGroupByParentItem(item);
+        var childGroup = _this5.contextMenu.getGroupByParentItem(item);
         if (childGroup === null) return;
         d3.select('#' + childGroup.id).remove();
-        _this4.removeChildren(childGroup);
+        _this5.removeChildren(childGroup);
       });
     }
 
@@ -521,14 +550,16 @@ var ContextMenuCanvas = function () {
 var D3V4ContextMenu = function () {
 
   /**
-   *
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
    * @param {object[]} dataSets
    */
-  function D3V4ContextMenu(dataSets) {
+  function D3V4ContextMenu(dataSets, d, i, elm) {
     classCallCheck(this, D3V4ContextMenu);
 
     var factory = new ContextMenuFactory();
-    this.canvas = new ContextMenuCanvas(factory.factory(dataSets));
+    this.canvas = new ContextMenuCanvas(factory.factory(dataSets, d, i, elm));
   }
 
   /**
@@ -546,9 +577,9 @@ var D3V4ContextMenu = function () {
 }();
 
 function d3V4Contextmenu (items) {
-  return function () {
+  return function (d, i) {
     d3.event.preventDefault();
-    var d3V4ContextMenu = new D3V4ContextMenu(items);
+    var d3V4ContextMenu = new D3V4ContextMenu(items, d, i, this);
     d3V4ContextMenu.show(d3.event.pageX, d3.event.pageY);
   };
 }

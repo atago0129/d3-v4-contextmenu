@@ -18,8 +18,8 @@ export class ContextMenuCanvas {
   constructor(contextMenu) {
     this.contextMenu = contextMenu;
     d3.select(document)
-      .on('click', function () {
-        if (d3.select(d3.event.target.parentNode).classed('context-menu-unclickable')) {
+      .on('click', () => {
+        if (d3.select(this.contextMenu.elm.parentNode).classed('context-menu-unclickable')) {
           return;
         }
         d3.selectAll('.d3-v4-context-menu-container').remove();
@@ -104,17 +104,17 @@ export class ContextMenuCanvas {
 
     contextItems.append('rect')
       .style('fill', (item) => (item.defaultFill))
-      .on('click', (item) => (item.action()))
+      .on('click', (item) => (item.onClick(this.contextMenu.d, this.contextMenu.i, this.contextMenu.elm)))
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', '100%')
       .attr('height', '100%');
     contextItems.append('text')
-      .text((item) => (item.getLabel()))
+      .text((item) => (item.getLabel(this.contextMenu.d, this.contextMenu.i, this.contextMenu.elm)))
       .attr("class", "item-label")
       .style("fill", "rgb")
       .style("font-size", 11)
-      .on('click', (item) => (item.action()))
+      .on('click', (item) => (item.onClick(this.contextMenu.d, this.contextMenu.i, this.contextMenu.elm)))
       .attr('x', '5px')
       .attr('y', '50%');
     contextItems.append('text')
