@@ -26,19 +26,27 @@ export class ContextMenuItem {
   }
 
   /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
    * @returns {string}
    */
-  getLabel() {
+  getLabel(d, i ,elm) {
     try {
-      return String(this.label());
+      return String(this.label.bind(elm, d, i)());
     } catch (e) {
       return String(this.label);
     }
   }
 
-  onClick() {
+  /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
+   */
+  onClick(d, i, elm) {
     if (this.action !== null) {
-      this.action();
+      this.action.bind(elm, d, i)();
     }
   }
 }

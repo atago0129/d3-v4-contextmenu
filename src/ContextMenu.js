@@ -1,10 +1,29 @@
 export class ContextMenu {
+  /** {*} */
+  d;
+
+  /** {number} */
+  i;
+
+  /** {HTMLElement} */
+  elm;
 
   /** {ContextMenuGroup[]} */
   _groups = [];
 
   /** {ContextMenuItem[]} */
   _items = [];
+
+  /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
+   */
+  constructor(d, i, elm) {
+    this.d = d;
+    this.i = i;
+    this.elm = elm;
+  }
 
   /**
    * @param {ContextMenuGroup} group

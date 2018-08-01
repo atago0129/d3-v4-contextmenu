@@ -10,11 +10,14 @@ export class ContextMenuFactory {
   groupIdIndex = 0;
 
   /**
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
    * @param {object[]} dataSets
    * @returns {ContextMenu}
    */
-  factory(dataSets) {
-    this.contextMenu = new ContextMenu();
+  factory(dataSets, d, i, elm) {
+    this.contextMenu = new ContextMenu(d, i, elm);
     this.parseList(null, dataSets, 0);
     return this.contextMenu;
   }
@@ -44,7 +47,7 @@ export class ContextMenuFactory {
       const action = ContextMenuFactory.getAction(dataSet);
       const children = ContextMenuFactory.getItems(dataSet);
       if (label === null || (action === null && children === null)) {
-        throw new Error('Skip!! ' + JSON.stringify(dataSet) + ' can not parse.');
+        throw new Error('Error!! ' + JSON.stringify(dataSet) + ' can not parse.');
       }
       itemIds.push(itemId);
       this.contextMenu.pushItem(new ContextMenuItem(
@@ -65,11 +68,7 @@ export class ContextMenuFactory {
    */
   static getLabel(dataSet) {
     if (dataSet.hasOwnProperty('label')) {
-      if (typeof dataSet.label === 'function') {
-        return String(dataSet.label());
-      } else {
-        return dataSet.label;
-      }
+      return dataSet.label;
     }
     return null;
   }

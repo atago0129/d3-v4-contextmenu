@@ -5,12 +5,14 @@ export class D3V4ContextMenu {
   canvas;
 
   /**
-   *
+   * @param {*} d
+   * @param {number} i
+   * @param {HTMLElement} elm
    * @param {object[]} dataSets
    */
-  constructor(dataSets) {
+  constructor(dataSets, d, i ,elm) {
     const factory = new ContextMenuFactory();
-    this.canvas = new ContextMenuCanvas(factory.factory(dataSets));
+    this.canvas = new ContextMenuCanvas(factory.factory(dataSets, d, i ,elm));
   }
 
   /**
