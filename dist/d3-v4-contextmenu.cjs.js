@@ -403,17 +403,13 @@ var ContextMenuCanvas = function () {
 
       var groupItems = this.contextMenu.getItemsByGroup(group);
 
-      var labelSizes = groupItems.reduce(function (sizes, item) {
-        return sizes.concat(_this3.calculateLabelSize(item));
-      }, []);
+      var labelSizes = this.calculateLabelSize(groupItems);
 
-      var width = d3.max(labelSizes.map(function (size) {
-        return size.width;
-      }));
+      var width = d3.max(labelSizes.widths);
 
-      var height = labelSizes.reduce(function (sum, size) {
-        return { height: sum.height + size.height };
-      }).height;
+      var height = labelSizes.heights.reduce(function (sum, size) {
+        return sum + size;
+      });
 
       var container = d3.select('body').append('div').style('width', width + 'px').style('height', height + 'px').style('left', x + 'px').style('top', y + 'px').style('position', 'absolute').classed('d3-v4-context-menu-container', true).classed('d3-v4-context-menu-group-nested' + group.nestedIndex, true).attr('id', group.id);
       var g = container.append('svg').attr('width', '100%').attr('height', '100%').attr('x', 0).attr('y', 0).append('g');
@@ -421,9 +417,9 @@ var ContextMenuCanvas = function () {
       var contextItems = contextMenu.enter().append('svg').attr('class', 'item-entry').attr('id', function (item) {
         return item.id;
       }).attr('x', 0).attr('y', function (item, i) {
-        return i * labelSizes[i].height;
+        return i * labelSizes.heights[i];
       }).attr('width', width).attr('height', function (item, i) {
-        return labelSizes[i].height;
+        return labelSizes.heights[i];
       }).classed('context-menu-unclickable', function (item) {
         return item.action === null;
       });
@@ -474,22 +470,32 @@ var ContextMenuCanvas = function () {
     }
 
     /**
-     * @param {ContextMenuItem} item
-     * @returns {{width: number, height: number}}
+     * @param {ContextMenuItem[]} groupItems
+     * @returns {{widths: number, heights: number}}
      */
 
   }, {
     key: 'calculateLabelSize',
-    value: function calculateLabelSize(item) {
+    value: function calculateLabelSize(groupItems) {
+      var _this4 = this;
+
       var g = d3.select('body').append('svg').attr('class', 'd3-v4-dummy').append('g');
-      var dummy = g.append('text').text(item.getLabel()).style('font-size', 11);
-      var width = dummy.node().getBBox().width + this.labelMargin + (this.contextMenu.getGroupByParentItem(item) !== null ? 15 : 0);
-      var height = dummy.node().getBBox().height + this.labelMargin;
-      d3.selectAll('.d3-v4-dummy').remove();
-      return {
-        width: width,
-        height: height
+      var dummyContextMenu = g.selectAll('rect').data(groupItems);
+      var dummyContextItems = dummyContextMenu.enter().append('svg').attr('class', 'dummy-item-entry');
+      dummyContextItems.append('text').text(function (item) {
+        return item.getLabel(_this4.contextMenu.d, _this4.contextMenu.i, _this4.contextMenu.elm) + (_this4.contextMenu.getGroupByParentItem(item) !== null ? ' >' : '');
+      }).style("font-size", 11).attr('class', 'dummy-text');
+      var dtext = d3.selectAll('.dummy-text');
+      var size = {
+        widths: dtext.nodes().map(function (node) {
+          return node.getBBox().width + _this4.labelMargin;
+        }),
+        heights: dtext.nodes().map(function (node) {
+          return node.getBBox().height + _this4.labelMargin;
+        })
       };
+      d3.selectAll('.d3-v4-dummy').remove();
+      return size;
     }
 
     /**
@@ -499,11 +505,11 @@ var ContextMenuCanvas = function () {
   }, {
     key: 'removeSameNestedGroups',
     value: function removeSameNestedGroups(targetGroup) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.contextMenu.getGroupsByNestedIndex(targetGroup.nestedIndex).map(function (group) {
         if (targetGroup === group) return;
-        _this4.removeChildren(group);
+        _this5.removeChildren(group);
         d3.select('#' + group.id).remove();
         d3.select('#' + group.parentItemId).classed('child-group-visible', false).select('rect').style("fill", function (item) {
           return item.defaultFill;
@@ -518,7 +524,7 @@ var ContextMenuCanvas = function () {
   }, {
     key: 'removeChildren',
     value: function removeChildren(group) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.contextMenu.getItemsByGroup(group).map(function (item) {
         var itemSelector = d3.select('#' + item.id);
@@ -526,10 +532,10 @@ var ContextMenuCanvas = function () {
           return item.defaultFill;
         });
         itemSelector.classed('child-group-visible', false);
-        var childGroup = _this5.contextMenu.getGroupByParentItem(item);
+        var childGroup = _this6.contextMenu.getGroupByParentItem(item);
         if (childGroup === null) return;
         d3.select('#' + childGroup.id).remove();
-        _this5.removeChildren(childGroup);
+        _this6.removeChildren(childGroup);
       });
     }
 

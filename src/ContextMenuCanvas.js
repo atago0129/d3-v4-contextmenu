@@ -45,11 +45,11 @@ export class ContextMenuCanvas {
 
     const groupItems = this.contextMenu.getItemsByGroup(group);
 
-    const labelSizes = groupItems.reduce((sizes, item) => (sizes.concat(this.calculateLabelSize(item))), []);
+    const labelSizes = this.calculateLabelSize(groupItems);
 
-    const width = d3.max(labelSizes.map((size) => (size.width)));
+    const width = d3.max(labelSizes.widths);
 
-    const height = labelSizes.reduce((sum, size) => ({height: sum.height + size.height})).height;
+    const height = labelSizes.heights.reduce((sum, size) => (sum + size));
 
     const container = d3.select('body').append('div')
       .style('width', width + 'px')
@@ -70,9 +70,9 @@ export class ContextMenuCanvas {
     const contextItems = contextMenu.enter().append('svg').attr('class', 'item-entry')
       .attr('id', (item) => (item.id))
       .attr('x', 0)
-      .attr('y', (item, i) => (i * labelSizes[i].height))
+      .attr('y', (item, i) => (i * labelSizes.heights[i]))
       .attr('width', width)
-      .attr('height', (item, i) => (labelSizes[i].height))
+      .attr('height', (item, i) => (labelSizes.heights[i]))
       .classed('context-menu-unclickable', (item) => (item.action === null));
 
     this.removeSameNestedGroups(group);
@@ -128,19 +128,24 @@ export class ContextMenuCanvas {
   }
 
   /**
-   * @param {ContextMenuItem} item
-   * @returns {{width: number, height: number}}
+   * @param {ContextMenuItem[]} groupItems
+   * @returns {{widths: number, heights: number}}
    */
-  calculateLabelSize(item) {
+  calculateLabelSize(groupItems) {
     const g = d3.select('body').append('svg').attr('class', 'd3-v4-dummy').append('g');
-    const dummy = g.append('text').text(item.getLabel()).style('font-size', 11);
-    const width = dummy.node().getBBox().width + this.labelMargin + (this.contextMenu.getGroupByParentItem(item) !== null ? 15 : 0);
-    const height = dummy.node().getBBox().height + this.labelMargin;
-    d3.selectAll('.d3-v4-dummy').remove();
-    return {
-      width: width,
-      height: height
+    const dummyContextMenu = g.selectAll('rect').data(groupItems);
+    const dummyContextItems = dummyContextMenu.enter().append('svg').attr('class', 'dummy-item-entry');
+    dummyContextItems.append('text')
+      .text((item) => (item.getLabel(this.contextMenu.d, this.contextMenu.i, this.contextMenu.elm) + (this.contextMenu.getGroupByParentItem(item) !== null ? ' >' : '')))
+      .style("font-size", 11)
+      .attr('class', 'dummy-text');
+    const dtext = d3.selectAll('.dummy-text');
+    const size = {
+      widths: dtext.nodes().map((node) => (node.getBBox().width + this.labelMargin)),
+      heights: dtext.nodes().map((node) => (node.getBBox().height + this.labelMargin))
     };
+    d3.selectAll('.d3-v4-dummy').remove();
+    return size;
   }
 
   /**
