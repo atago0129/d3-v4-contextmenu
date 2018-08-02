@@ -575,7 +575,7 @@ var D3V4ContextMenu = function () {
 function d3V4Contextmenu (items) {
   return function (d, i) {
     event.preventDefault();
-    var d3V4ContextMenu = new D3V4ContextMenu(items, d, i, this);
+    var d3V4ContextMenu = new D3V4ContextMenu(items, d, i, event.target);
     d3V4ContextMenu.show(event.pageX, event.pageY);
   };
 }
